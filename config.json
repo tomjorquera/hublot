@@ -1,0 +1,20 @@
+{
+  "visio": {
+    "url": "http://hubl.in"
+  },
+  "runner": {
+    "name": "hublot",
+    "driver" : {
+      "desiredCapabilities": {
+        "browserName": "chrome",
+        "chromeOptions": {
+          "args" : [
+            "--disable-web-security",
+            "--use-fake-device-for-media-stream",
+            "--use-fake-ui-for-media-stream"
+          ]
+        }
+      }
+    }
+  }
+}

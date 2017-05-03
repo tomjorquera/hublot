@@ -1,0 +1,10 @@
+{
+  "name": "hublot",
+  "version": "0.0.1",
+  "main": "index.js",
+  "dependencies":{
+    "webdriverio": "4.7.1"
+  },
+  "author": "Tom Jorquera",
+  "license": "AGPLv3"
+}
