@@ -1,10 +1,15 @@
 {
   "name": "hublot",
+  "description": "A robot for hubl.in",
+  "repository": "https://ci.linagora.com/labs/hublot/",
   "version": "0.0.1",
-  "main": "index.js",
+  "main": "app.js",
+  "scripts":{
+    "start": "node app.js"
+  },
   "dependencies":{
     "webdriverio": "4.7.1"
   },
-  "author": "Tom Jorquera",
-  "license": "AGPLv3"
+  "author": "Linagora Folks",
+  "license": "AGPL-3.0"
 }
