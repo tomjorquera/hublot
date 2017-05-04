@@ -10,5 +10,5 @@ fs.readFile('./client/controller/controller.js', 'utf8', (err, data) => {
     console.error(err);
     return;
   }
-  let client = runner.run(data, config.visio.url, 'test-bot');
+  let client = runner.run([data], config.visio.url, 'test-bot');
 });
