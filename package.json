@@ -5,10 +5,15 @@
   "version": "0.0.1",
   "main": "app.js",
   "scripts":{
-    "start": "node app.js"
+    "start": "node app.js",
+    "test": "jest",
   },
   "dependencies":{
-    "webdriverio": "4.7.1"
+    "webdriverio": "4.7.1",
+    "mz": "2.6.0"
+  },
+  "devDependencies":{
+    "jest": "20.0.0"
   },
   "author": "Linagora Folks",
   "license": "AGPL-3.0"
