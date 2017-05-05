@@ -18,5 +18,9 @@
     "xo": "^0.18.2"
   },
   "author": "Linagora Folks",
-  "license": "AGPL-3.0"
+  "license": "AGPL-3.0",
+  "xo": {
+    "space": true,
+    "envs": ["jest"]
+  }
 }
