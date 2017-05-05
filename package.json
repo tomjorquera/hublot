@@ -6,15 +6,16 @@
   "main": "app.js",
   "scripts":{
     "start": "node app.js",
-    "test": "jest",
+    "test": "xo && jest",
     "test:watch": "jest --watch"
   },
   "dependencies":{
     "webdriverio": "4.7.1",
     "mz": "2.6.0"
   },
-  "devDependencies":{
-    "jest": "20.0.0"
+  "devDependencies": {
+    "jest": "20.0.0",
+    "xo": "^0.18.2"
   },
   "author": "Linagora Folks",
   "license": "AGPL-3.0"
