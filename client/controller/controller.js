@@ -1,3 +1,8 @@
+// This file is used to define the global `robotController` object that is used
+// to expose the hubl.in services as an unified API to be used by the robot.
+//
+// It is the first file of the `controller` folder to be loaded in the client.
+
 const room = arguments[0];
 const name = arguments[1];
 
