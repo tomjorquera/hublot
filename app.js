@@ -5,9 +5,10 @@ const controller = require('./lib/controller.js')('./client');
 
 controller.loadAll('controller', 'lib', 'robot')
   .then(modules => {
-    let client = runner.run(modules, config.visio.url, 'test-bot');
+    // Note: result can be stored in a variable to control further the browser
+    // e.g.: let client =  runner.run(...); client.end();
+    runner.run(modules, config.visio.url, 'test-bot');
   })
   .catch(err => {
     console.error(err);
-    return;
   });

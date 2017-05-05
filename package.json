@@ -4,14 +4,14 @@
   "repository": "https://ci.linagora.com/labs/hublot/",
   "version": "0.0.1",
   "main": "app.js",
-  "scripts":{
+  "scripts": {
     "start": "node app.js",
     "test": "xo && jest",
     "test:watch": "jest --watch"
   },
-  "dependencies":{
-    "webdriverio": "4.7.1",
-    "mz": "2.6.0"
+  "dependencies": {
+    "mz": "2.6.0",
+    "webdriverio": "4.7.1"
   },
   "devDependencies": {
     "jest": "20.0.0",
