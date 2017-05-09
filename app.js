@@ -1,14 +1,13 @@
 const config = require('./config.json');
 
-const webdriverio = require('webdriverio');
-const fs = require('fs');
-
 const runner = require('./lib/runner.js')(config.runner);
+const controller = require('./lib/controller.js')('./client');
 
-fs.readFile('robotClientController.js', 'utf8', (err,data) => {
-  if (err) {
+controller.loadAll('controller', 'lib', 'robot')
+  .then(modules => {
+    let client = runner.run(modules, config.visio.url, 'test-bot');
+  })
+  .catch(err => {
     console.error(err);
     return;
-  }
-  let client = runner.run(data, config.visio.url, 'test-bot');
-});
+  });
