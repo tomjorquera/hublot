@@ -2,6 +2,9 @@
 //
 // It is the first file of the `robot` folder to be loaded in the client.
 
+/* global robot:true */
+/* exported robot */
+
 robot = {
   // TODO
 };

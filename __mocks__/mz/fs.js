@@ -19,28 +19,25 @@ let mockFiles = Object.create(null);
 // This is a custom function that our tests can use during setup to specify
 // what the files on the "mock" filesystem should look like when any of the
 // `moz/fs` APIs are used.
-fs.__setup = function(newMockFiles){
+fs.__setup = function (newMockFiles) {
   mockFiles = newMockFiles;
-}
-
-
-fs.readFile = function(filePath, ...rest) {
-  if(Object.keys(mockFiles).includes(filePath)){
-    return Promise.resolve(mockFiles[filePath]);
-  } else {
-    return Promise.reject(new Error('no such file or directory'));
-  }
 };
 
-fs.readdir = function(dirPath, ...rest) {
-  const res = Object.keys(mockFiles)
-        .filter(f => path.dirname(f) == dirPath)
-        .map(f => path.basename(f));
-  if(res.length != 0) {
-    return Promise.resolve(res);
-  } else {
-    return Promise.reject(new Error('no such file or directory')) ;
+fs.readFile = function (filePath) {
+  if (Object.keys(mockFiles).includes(filePath)) {
+    return Promise.resolve(mockFiles[filePath]);
   }
+  return Promise.reject(new Error('no such file or directory'));
+};
+
+fs.readdir = function (dirPath) {
+  const res = Object.keys(mockFiles)
+        .filter(f => path.dirname(f) === dirPath)
+        .map(f => path.basename(f));
+  if (res.length !== 0) {
+    return Promise.resolve(res);
+  }
+  return Promise.reject(new Error('no such file or directory'));
 };
 
 module.exports = fs;

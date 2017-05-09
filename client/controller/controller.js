@@ -3,6 +3,9 @@
 //
 // It is the first file of the `controller` folder to be loaded in the client.
 
+/* global robotController:true document angular easyrtc */
+/* exported robotController */
+
 const room = arguments[0];
 const name = arguments[1];
 
@@ -15,40 +18,40 @@ robotController = {
     return easyrtc.getRoomOccupantsAsArray(room);
   },
 
-  getRemoteStream: (participant) => {
+  getRemoteStream: participant => {
     return easyrtc.getRemoteStream(participant);
   },
 
   getRemoteStreams: () => {
-    let participants = robotController.getParticipants();
-    let res = {};
-    for(let i = 0; i < participants.length; i++){
-      let participant = participants[i];
-      try{
-        let mediaStream = robotController.getRemoteStream(participant);
-        if(mediaStream !== null){
+    const participants = robotController.getParticipants();
+    const res = {};
+    for (let i = 0; i < participants.length; i++) {
+      const participant = participants[i];
+      try {
+        const mediaStream = robotController.getRemoteStream(participant);
+        if (mediaStream !== null) {
           res[participant] = mediaStream;
         }
-      } catch (e){
+      } catch (err) {
         console.error('could not get remote stream for %s', participant);
-        console.error(e);
+        console.error(err);
       }
     }
     return res;
   }
 };
 
-robotController.$scope.$on('conferencestate:attendees:push', function(event, data) {
+robotController.$scope.$on('conferencestate:attendees:push', (event, data) => {
   console.log('### someone connected %j %j', event, data);
   console.log('RemoteMediaStream %j', robotController.getRemoteStream(data.easyrtcid));
   robotController.chatService.sendMessage({author: name, displayName: name, message: 'Hello!'});
 });
 
-robotController.$scope.$on('conferencestate:attendees:remove', function(event, data) {
+robotController.$scope.$on('conferencestate:attendees:remove', (event, data) => {
   console.log('### someone leaved %j %j', event, data);
   robotController.chatService.sendMessage({author: name, displayName: name, message: 'Goodbye!'});
 });
 
-robotController.$scope.$on('attendee:update', function(event, data){
+robotController.$scope.$on('attendee:update', (event, data) => {
   console.log('### received update %j %j', event, data);
 });
