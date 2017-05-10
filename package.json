@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node app.js",
     "test": "xo && jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "ci": "yarn && xo && jest --runInBand"
   },
   "dependencies": {
     "mz": "2.6.0",

@@ -1,0 +1,8 @@
+image: registry.gitlab.com/tomjorquera/runner_node-chromium:latest
+
+stages:
+  - test
+
+test:
+  script:
+    - yarn run ci
