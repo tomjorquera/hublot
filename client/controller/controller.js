@@ -7,7 +7,6 @@
 /* exported robotController */
 
 const room = arguments[0];
-const name = arguments[1];
 
 robotController = {
   $scope: angular.element(document.body).scope().$root,
@@ -38,20 +37,21 @@ robotController = {
       }
     }
     return res;
-  }
+  },
+
+  onAttendeePush: () => {},
+  onAttendeeRemove: () => {},
+  onAttendeeUpdate: () => {}
 };
 
 robotController.$scope.$on('conferencestate:attendees:push', (event, data) => {
-  console.log('### someone connected %j %j', event, data);
-  console.log('RemoteMediaStream %j', robotController.getRemoteStream(data.easyrtcid));
-  robotController.chatService.sendMessage({author: name, displayName: name, message: 'Hello!'});
+  robotController.onAttendeePush(event, data);
 });
 
 robotController.$scope.$on('conferencestate:attendees:remove', (event, data) => {
-  console.log('### someone leaved %j %j', event, data);
-  robotController.chatService.sendMessage({author: name, displayName: name, message: 'Goodbye!'});
+  robotController.onAttendeeRemove(event, data);
 });
 
-robotController.$scope.$on('attendee:update', (event, data) => {
-  console.log('### received update %j %j', event, data);
+robotController.$scope.$on('conferencestate:attendees:update', (event, data) => {
+  robotController.onAttendeeUpdate(event, data);
 });
