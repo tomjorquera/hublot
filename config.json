@@ -3,7 +3,6 @@
     "url": "http://hubl.in"
   },
   "runner": {
-    "name": "hublot",
     "driver" : {
       "desiredCapabilities": {
         "browserName": "chrome",
@@ -16,5 +15,8 @@
         }
       }
     }
-  }
+  },
+	"client": {
+		"name": "hublot"
+	}
 }
