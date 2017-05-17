@@ -77,7 +77,7 @@ describe('client/lib/stt', () => {
       text: 'this is a transcript'
     }));
   });
-  test('should not call callback with actual status', () => {
+  test('should not call callback with incorrect value of status', () => {
     const stt = global.robotLib.stt(config);
     const callback = jest.fn();
     const ws = stt.getTranscriptSocket(callback);
@@ -97,11 +97,9 @@ describe('client/lib/stt', () => {
       data: JSON.stringify(dataContent)
     });
 
-    expect(callback).not.toHaveBeenCalledWith(expect.objectContaining({
-      status: 0
-    }));
+    expect(callback).not.toHaveBeenCalled();
   });
-  test('should not call callback with actual final', () => {
+  test('should not call callback when final value is incorrect', () => {
     const stt = global.robotLib.stt(config);
     const callback = jest.fn();
     const ws = stt.getTranscriptSocket(callback);
@@ -121,8 +119,6 @@ describe('client/lib/stt', () => {
       data: JSON.stringify(dataContent)
     });
 
-    expect(callback).not.toHaveBeenCalledWith(expect.objectContaining({
-      final: false
-    }));
+    expect(callback).not.toHaveBeenCalled();
   });
 });
