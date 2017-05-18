@@ -99,7 +99,7 @@ describe('client/lib/stt', () => {
 
     expect(callback).not.toHaveBeenCalled();
   });
-  test('should not call callback when final value is incorrect', () => {
+  test('should not call callback when transcription is not final', () => {
     const stt = global.robotLib.stt(config);
     const callback = jest.fn();
     const ws = stt.getTranscriptSocket(callback);
