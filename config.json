@@ -16,7 +16,8 @@
       }
     }
   },
-	"client": {
-		"name": "hublot"
-	}
+  "client": {
+    "name": "hublot",
+    "gstreamerURL": "ws://localhost:8888"
+  }
 }
