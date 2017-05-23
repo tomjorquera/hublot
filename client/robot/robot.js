@@ -18,6 +18,7 @@ robot = {
     return mediaRecorder;
   },
   start: () => {
+    robotController.external.load(config);
     robotLib.stt = robotLib.stt(config);
 
     robotController.onAttendeePush = (e, data) => {
