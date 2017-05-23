@@ -18,6 +18,9 @@ describe('client/robot', () => {
     };
 
     global.robotController = {
+      external: {
+        load: () => {}
+      },
       getRemoteStream: id => ({type: 'RemoteStream', id})
     };
 
