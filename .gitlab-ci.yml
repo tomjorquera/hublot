@@ -4,5 +4,7 @@ stages:
   - test
 
 test:
+  tags:
+    - docker
   script:
     - yarn run ci
