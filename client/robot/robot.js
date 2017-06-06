@@ -20,6 +20,7 @@ robot = {
   start: () => {
     robotController.external.load(config);
     robotLib.stt = robotLib.stt(config);
+    robotLib.archive = robotLib.archive(config);
 
     robotController.onAttendeePush = (e, data) => {
       const stream = robotController.getRemoteStream(data.easyrtcid);
