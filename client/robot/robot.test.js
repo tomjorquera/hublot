@@ -13,14 +13,16 @@ describe('client/robot', () => {
           this.interval = interval;
         }
       };
-      global.MediaRecorder.instance = res;
+      global.MediaRecorder.instances[stream.id] = res;
       return res;
     };
+    global.MediaRecorder.instances = {};
 
     global.robotController = {
       external: {
         load: () => {}
       },
+      getParticipants: () => ['someid1', 'someid2'],
       getRemoteStream: id => ({type: 'RemoteStream', id})
     };
 
@@ -73,12 +75,24 @@ describe('client/robot', () => {
     expect(callbackCalled).toBe('somedata');
   });
 
+  test('should start transcribing users already present on `start`', () => {
+    global.robot.start();
+
+    const e1 = {data: 'somedata1'};
+    global.MediaRecorder.instances.someid1.ondataavailable(e1);
+    expect(global.robotLib.sttDataSent[0]).toBe(e1.data);
+
+    const e2 = {data: 'somedata2'};
+    global.MediaRecorder.instances.someid2.ondataavailable(e2);
+    expect(global.robotLib.sttDataSent[1]).toBe(e2.data);
+  });
+
   test('should start transcribing stream on user connection after `start`', () => {
     global.robot.start();
     global.robotController.onAttendeePush({}, {easyrtcid: 'testid'});
 
     const e = {data: 'somedata'};
-    global.MediaRecorder.instance.ondataavailable(e);
+    global.MediaRecorder.instances.testid.ondataavailable(e);
     expect(global.robotLib.sttDataSent[0]).toBe(e.data);
   });
 });
