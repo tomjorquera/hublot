@@ -20,5 +20,6 @@
     "name": "hublot",
     "gstreamerURL": "ws://localhost:8888",
     "externalLibs": []
+		"archive": "http://localhost:8080/api"
   }
 }
