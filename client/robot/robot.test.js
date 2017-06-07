@@ -32,7 +32,8 @@ describe('client/robot', () => {
             global.robotLib.sttDataSent.push(data);
           }
         })
-      })
+      }),
+      archive: () => ({})
     };
 
     /* eslint-disable import/no-unassigned-import */
