@@ -75,7 +75,7 @@ describe('client/robot', () => {
 
   test('should start transcribing stream on user connection after `start`', () => {
     global.robot.start();
-    global.robotController.onAttendeePush({}, {easyrtic: 'testid'});
+    global.robotController.onAttendeePush({}, {easyrtcid: 'testid'});
 
     const e = {data: 'somedata'};
     global.MediaRecorder.instance.ondataavailable(e);
