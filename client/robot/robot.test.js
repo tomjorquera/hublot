@@ -33,6 +33,10 @@ describe('client/robot', () => {
           }
         })
       }),
+      reco: () => ({
+        start: () => {},
+        getOnlineReco: () => new Promise(() => {}, () => {})
+      }),
       archive: () => ({})
     };
 

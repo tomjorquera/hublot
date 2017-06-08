@@ -5,6 +5,7 @@
 /* global robot:true robotController robotLib MediaRecorder */
 /* exported robot */
 
+const room = arguments[0];
 const config = arguments[1];
 
 robotController.external.load(config);
@@ -21,6 +22,7 @@ robot = {
   },
   start: () => {
     robotLib.stt = robotLib.stt(config);
+    robotLib.reco = robotLib.reco(config);
     robotLib.archive = robotLib.archive(config);
 
     robotController.onAttendeePush = (e, data) => {
@@ -28,5 +30,10 @@ robot = {
       const ws = robotLib.stt.getTranscriptSocket(e => console.log('> ' + e.text));
       robot.processAudio(stream, e => ws.send(e.data), 100);
     };
+
+		robotLib.reco.start(room);
+		setInterval(
+			robotLib.reco.getOnlineReco(room).then(console.log),
+			8000);
   }
 };
