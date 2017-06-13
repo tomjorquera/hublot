@@ -9,6 +9,8 @@
         "chromeOptions": {
           "args" : [
             "--disable-web-security",
+						"--user-data-dir=$HOME/tmp/chromium",
+						"--allow-running-insecure-content",
             "--use-fake-device-for-media-stream",
             "--use-fake-ui-for-media-stream"
           ]
@@ -19,7 +21,15 @@
   "client": {
     "name": "hublot",
     "gstreamerURL": "ws://localhost:8888",
-    "externalLibs": []
-		"archive": "http://localhost:8080/api"
+    "externalLibs": [
+      "https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"
+    ],
+    "archive": "http://localhost:8080/api",
+    "reco": {
+      "host": "localhost",
+      "port": 8090,
+      "reconnectInterval": 5000
+    }
   }
 }
