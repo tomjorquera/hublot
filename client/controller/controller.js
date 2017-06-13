@@ -39,6 +39,16 @@ robotController = {
     return res;
   },
 
+  sendMessage: (author, authorAvatar, message) => {
+    robotController.chatService.sendMessage({
+      author,
+      authorAvatar,
+      message,
+      displayName: author,
+      published: new Date()
+    });
+  },
+
   onAttendeePush: () => {},
   onAttendeeRemove: () => {},
   onAttendeeUpdate: () => {}
