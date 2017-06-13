@@ -11,7 +11,8 @@ const config = arguments[1];
 robotController.external.load(config);
 
 robot = {
-  recordedParticipants: {},
+  recordedParticipantsWS: {},
+  participantsMediaRecorders: {},
 
   processAudio(stream, callback, interval) {
     const mediaRecorder = new MediaRecorder(stream);
@@ -64,8 +65,12 @@ robot = {
           text: e.from + '\t' + e.until + '\t' + easyrtcid + '\t' + e.text
         });
     });
-    robot.processAudio(stream, e => ws.send(e.data), 100);
-    robot.recordedParticipants[easyrtcid] = ws;
+    robot.participantsMediaRecorders[easyrtcid] = robot.processAudio(stream, e => ws.send(e.data), 100);
+    robot.recordedParticipantsWS[easyrtcid] = ws;
+  },
+  stopRecordParticipant(easyrtcid) {
+    robot.participantsMediaRecorders[easyrtcid].stop();
+    robot.recordedParticipantsWS[easyrtcid].close();
   },
 
   start: () => {
@@ -75,6 +80,10 @@ robot = {
 
     robotController.onAttendeePush = (e, data) => {
       robot.recordParticipant(data.easyrtcid);
+    };
+
+    robotController.onAttendeeRemove = (e, data) => {
+      robot.stopRecordParticipant(data.easyrtcid);
     };
 
     robotLib.reco.start(room);

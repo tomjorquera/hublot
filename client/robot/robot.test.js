@@ -7,10 +7,15 @@ describe('client/robot', () => {
         type: 'mediaRecorder',
         stream,
         started: false,
+        stopped: false,
         interval: null,
         start(interval) {
           this.started = true;
           this.interval = interval;
+        },
+        stop() {
+          this.started = false;
+          this.stopped = true;
         }
       };
       global.MediaRecorder.instances[stream.id] = res;
@@ -28,10 +33,14 @@ describe('client/robot', () => {
 
     global.robotLib = {
       sttDataSent: [],
+      closed: false,
       stt: () => ({
         getTranscriptSocket: () => ({
           send(data) {
             global.robotLib.sttDataSent.push(data);
+          },
+          close() {
+            global.robotLib.closed = true;
           }
         })
       }),
@@ -94,5 +103,13 @@ describe('client/robot', () => {
     const e = {data: 'somedata'};
     global.MediaRecorder.instances.testid.ondataavailable(e);
     expect(global.robotLib.sttDataSent[0]).toBe(e.data);
+  });
+
+  test('should stop transcribing stream on user disconnect', () => {
+    global.robot.start();
+    global.robotController.onAttendeeRemove({}, {easyrtcid: 'someid1'});
+
+    expect(global.MediaRecorder.instances.someid1.stopped).toBeTruthy();
+    expect(global.robotLib.closed).toBeTruthy();
   });
 });
