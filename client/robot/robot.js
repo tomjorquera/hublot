@@ -7,6 +7,8 @@
 
 const config = arguments[1];
 
+robotController.external.load(config);
+
 robot = {
   recordedParticipants: {},
 
@@ -18,7 +20,6 @@ robot = {
     return mediaRecorder;
   },
   start: () => {
-    robotController.external.load(config);
     robotLib.stt = robotLib.stt(config);
     robotLib.archive = robotLib.archive(config);
 
