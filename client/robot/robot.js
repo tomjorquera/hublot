@@ -11,7 +11,8 @@ const config = arguments[1];
 robotController.external.load(config);
 
 robot = {
-  recordedParticipants: {},
+  recordedParticipantsWS: {},
+  participantsMediaRecorders: {},
 
   processAudio(stream, callback, interval) {
     const mediaRecorder = new MediaRecorder(stream);
@@ -54,22 +55,35 @@ robot = {
     }
   },
 
+  recordParticipant(easyrtcid) {
+    const stream = robotController.getRemoteStream(easyrtcid);
+    const ws = robotLib.stt.getTranscriptSocket(e => {
+      console.log('> ' + e.text);
+      robotLib.reco.send(
+        {
+          from: room,
+          text: e.from + '\t' + e.until + '\t' + easyrtcid + '\t' + e.text
+        });
+    });
+    robot.participantsMediaRecorders[easyrtcid] = robot.processAudio(stream, e => ws.send(e.data), 100);
+    robot.recordedParticipantsWS[easyrtcid] = ws;
+  },
+  stopRecordParticipant(easyrtcid) {
+    robot.participantsMediaRecorders[easyrtcid].stop();
+    robot.recordedParticipantsWS[easyrtcid].close();
+  },
+
   start: () => {
     robotLib.stt = robotLib.stt(config);
     robotLib.reco = robotLib.reco(config);
     robotLib.archive = robotLib.archive(config);
 
     robotController.onAttendeePush = (e, data) => {
-      const stream = robotController.getRemoteStream(data.easyrtcid);
-      const ws = robotLib.stt.getTranscriptSocket(e => {
-        console.log('> ' + e.text);
-        robotLib.reco.send(
-          {
-            from: room,
-            text: e.from + '\t' + e.until + '\t' + data.easyrtcid + '\t' + e.text
-          });
-      });
-      robot.processAudio(stream, e => ws.send(e.data), 100);
+      robot.recordParticipant(data.easyrtcid);
+    };
+
+    robotController.onAttendeeRemove = (e, data) => {
+      robot.stopRecordParticipant(data.easyrtcid);
     };
 
     robotLib.reco.start(room);
@@ -78,5 +92,8 @@ robot = {
         .then(robot.processReco)
         .catch(console.error),
       8000);
+
+    // Record current participants already present in the room
+    robotController.getParticipants().map(robot.recordParticipant);
   }
 };
