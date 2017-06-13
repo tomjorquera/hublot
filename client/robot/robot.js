@@ -20,6 +20,40 @@ robot = {
     mediaRecorder.start(interval);
     return mediaRecorder;
   },
+
+  processReco(reco) {
+    reco = JSON.parse(reco);
+    let formattedReco = '';
+
+    if (reco.keywords && reco.keywords.length > 0) {
+      formattedReco += '<h5>Mots-Clés</h5> ';
+      for (let i = 0; i < reco.keywords.length; i++) {
+        formattedReco += reco.keywords[i].key + ', ';
+      }
+      // Remove last ', '
+      formattedReco = formattedReco.substring(0, formattedReco.length - 2);
+    }
+
+    if (reco.wikiarticles && reco.wikiarticles.length > 0) {
+      formattedReco += '<h5>Wikipedia</h5>';
+      for (let i = 0; i < reco.wikiarticles.length && i < 5; i++) {
+        formattedReco += '<p><a href="' + encodeURI(reco.wikiarticles[i].link) + '" target="_blank">' + reco.wikiarticles[i].title + '</a>';
+      }
+    }
+
+    if (reco.soArticles && reco.soArticles.length > 0) {
+      formattedReco += '<h5>StackOverflow</h5>';
+      for (let i = 0; i < reco.soArticles.length && i < 5; i++) {
+        formattedReco += '<p><a href="' + encodeURI(reco.soArticles[i].link) + '" target="_blank">' + reco.soArticles[i].title + '</a>';
+      }
+    }
+
+    console.log(formattedReco);
+    if (formattedReco !== '') {
+      robotController.sendMessage(config.name, config.avatar, formattedReco);
+    }
+  },
+
   start: () => {
     robotLib.stt = robotLib.stt(config);
     robotLib.reco = robotLib.reco(config);
@@ -27,13 +61,22 @@ robot = {
 
     robotController.onAttendeePush = (e, data) => {
       const stream = robotController.getRemoteStream(data.easyrtcid);
-      const ws = robotLib.stt.getTranscriptSocket(e => console.log('> ' + e.text));
+      const ws = robotLib.stt.getTranscriptSocket(e => {
+        console.log('> ' + e.text);
+        robotLib.reco.send(
+          {
+            from: room,
+            text: e.from + '\t' + e.until + '\t' + data.easyrtcid + '\t' + e.text
+          });
+      });
       robot.processAudio(stream, e => ws.send(e.data), 100);
     };
 
-		robotLib.reco.start(room);
-		setInterval(
-			robotLib.reco.getOnlineReco(room).then(console.log),
-			8000);
+    robotLib.reco.start(room);
+    setInterval(
+      () => robotLib.reco.getOnlineReco(room)
+        .then(robot.processReco)
+        .catch(console.error),
+      8000);
   }
 };
