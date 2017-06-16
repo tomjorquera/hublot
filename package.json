@@ -8,10 +8,14 @@
     "start": "node app.js",
     "test": "xo && jest",
     "test:watch": "jest --watch",
-    "ci": "yarn && xo && jest --runInBand"
+    "ci": "yarn && xo && jest --runInBand",
+    "setup": "yarn run selenium-standalone install",
+    "webdriver-start": "./bin/webdriver-start",
+    "webdriver-stop": "./bin/webdriver-stop"
   },
   "dependencies": {
     "mz": "2.6.0",
+    "selenium-standalone": "^6.5.0",
     "webdriverio": "4.7.1"
   },
   "devDependencies": {
@@ -22,6 +26,8 @@
   "license": "AGPL-3.0",
   "xo": {
     "space": true,
-    "envs": ["jest"]
+    "envs": [
+      "jest"
+    ]
   }
 }
