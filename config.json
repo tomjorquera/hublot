@@ -9,9 +9,11 @@
         "chromeOptions": {
           "args" : [
             "--disable-web-security",
-						"--user-data-dir=$HOME/tmp/chromium",
+						"--user-data-dir=./tmp/chromium",
 						"--allow-running-insecure-content",
             "--use-fake-device-for-media-stream",
+						"--use-file-for-fake-audio-capture=./media/silence.wav",
+						"--use-file-for-fake-video-capture=./media/logo.y4m",
             "--use-fake-ui-for-media-stream"
           ]
         }
