@@ -1,5 +1,23 @@
 'use strict';
 
+const sttMock = {
+  sttDataSent: [],
+  wsMock: {
+    status: 'unitialized',
+    send(data) {
+      sttMock.sttDataSent.push(data);
+    },
+    close() {
+      sttMock.wsMock.status = 'closed';
+    }
+  },
+  getTranscriptSocket: () => {
+    sttMock.wsMock.status = 'open';
+    sttMock.sttDataSend = [];
+    return sttMock.wsMock;
+  }
+};
+
 describe('client/robot', () => {
   beforeEach(() => {
     global.MediaRecorder = function (stream) {
@@ -37,18 +55,7 @@ describe('client/robot', () => {
     };
 
     global.robotLib = {
-      sttDataSent: [],
-      closed: false,
-      stt: () => ({
-        getTranscriptSocket: () => ({
-          send(data) {
-            global.robotLib.sttDataSent.push(data);
-          },
-          close() {
-            global.robotLib.closed = true;
-          }
-        })
-      }),
+      stt: () => sttMock,
       reco: () => ({
         start: () => {},
         getOnlineReco: () => new Promise(() => {}, () => {})
@@ -100,11 +107,11 @@ describe('client/robot', () => {
 
     const e1 = {data: 'somedata1'};
     global.MediaRecorder.instances.someid1.ondataavailable(e1);
-    expect(global.robotLib.sttDataSent[0]).toBe(e1.data);
+    expect(sttMock.sttDataSent[0]).toBe(e1.data);
 
     const e2 = {data: 'somedata2'};
     global.MediaRecorder.instances.someid2.ondataavailable(e2);
-    expect(global.robotLib.sttDataSent[1]).toBe(e2.data);
+    expect(sttMock.sttDataSent[1]).toBe(e2.data);
   });
 
   test('should start transcribing stream on user connection after `start`', () => {
@@ -113,7 +120,8 @@ describe('client/robot', () => {
 
     const e = {data: 'somedata'};
     global.MediaRecorder.instances.testid.ondataavailable(e);
-    expect(global.robotLib.sttDataSent[0]).toBe(e.data);
+    console.log(sttMock.sttDataSent);
+    expect(sttMock.sttDataSent[sttMock.sttDataSent.length - 1]).toBe(e.data);
   });
 
   test('should stop transcribing stream on user disconnect', () => {
@@ -121,6 +129,7 @@ describe('client/robot', () => {
     global.robotController.onAttendeeRemove({}, {easyrtcid: 'someid1'});
 
     expect(global.MediaRecorder.instances.someid1.stopped).toBeTruthy();
-    expect(global.robotLib.closed).toBeTruthy();
+    expect(sttMock.wsMock.status).toBe('closed');
+  });
   });
 });
