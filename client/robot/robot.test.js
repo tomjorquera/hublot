@@ -131,5 +131,15 @@ describe('client/robot', () => {
     expect(global.MediaRecorder.instances.someid1.stopped).toBeTruthy();
     expect(sttMock.wsMock.status).toBe('closed');
   });
+
+  test('should try to reopen a stt ws on error', () => {
+    global.robot.start();
+
+    // Trigger an error
+    sttMock.wsMock.status = 'error';
+    sttMock.wsMock.onerror('error');
+
+    // Check WS has been reopened
+    expect(sttMock.wsMock.status).toBe('open');
   });
 });
