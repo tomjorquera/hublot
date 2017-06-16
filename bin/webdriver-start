@@ -1,0 +1,10 @@
+#!/bin/sh
+
+if [ -f ./tmp/webdriver_pid ]
+then
+  echo "./tmp/webdriver_pid already exists. Is the server running?" 1>&2
+else
+  nohup ./node_modules/.bin/selenium-standalone start &
+  echo $! > ./tmp/webdriver_pid
+fi
+
