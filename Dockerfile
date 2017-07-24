@@ -4,14 +4,16 @@ RUN apk update && apk add openjdk8
 
 RUN mkdir -p /usr/src/app/hublot
 WORKDIR /usr/src/app/hublot
-RUN mkdir -p ./tmp
 
-COPY package.json /usr/src/app/hublot
-
-RUN npm install
-RUN npm run setup
+# COPY package.json /usr/src/app/hublot
+# RUN npm install
 
 COPY . /usr/src/app/hublot
+RUN npm install
+
+RUN npm run setup
+
+RUN mkdir -p ./tmp
 
 RUN chmod +x start.sh
 
