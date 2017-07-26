@@ -13,8 +13,6 @@ RUN npm install
 
 RUN npm run setup
 
-RUN mkdir -p ./tmp
-
 RUN chmod +x start.sh
 
 CMD ./start.sh
