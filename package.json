@@ -9,7 +9,7 @@
     "test": "xo && jest",
     "test:watch": "jest --watch",
     "ci": "yarn && xo && jest --runInBand",
-    "setup": "yarn run selenium-standalone install",
+    "setup": "yarn run selenium-standalone install && webdriver-manager update --versions.chrome=2.29 --gecko=false",
     "webdriver-start": "./bin/webdriver-start",
     "webdriver-stop": "./bin/webdriver-stop"
   },
