@@ -18,7 +18,7 @@ RUN npm run setup
 
 RUN chmod +x start.sh
 
-ADD xvfb-chromium /usr/bin/xvfb-chromium
+ADD docker-chromium-xvfb/xvfb-chromium /usr/bin/xvfb-chromium
 RUN ln -s /usr/bin/xvfb-chromium /usr/bin/google-chrome
 RUN ln -s /usr/bin/xvfb-chromium /usr/bin/chromium-browser
 
