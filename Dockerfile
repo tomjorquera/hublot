@@ -1,25 +1,25 @@
 FROM node:8-stretch
 
 RUN apt-get -q update && apt-get -y -q install \
-     openjdk-8-jre-headless \
-     libgconf-2-4 \
-     curl \
-     xvfb \
      chromium \
-  && npm set -g progress=false
+     libgconf-2-4 \
+     openjdk-8-jre-headless \
+     xvfb \
+  && npm set -g progress=false \
+  && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /usr/src/app/hublot
 WORKDIR /usr/src/app/hublot
 
-COPY . /usr/src/app/hublot
-RUN npm install
+COPY package.json .
 
+RUN npm install
 RUN npm run setup
 
-RUN chmod +x start.sh
+COPY xvfb-chromium /usr/bin/xvfb-chromium
+RUN ln -s /usr/bin/xvfb-chromium /usr/bin/google-chrome && \
+    ln -s /usr/bin/xvfb-chromium /usr/bin/chromium-browser
 
-ADD docker-chromium-xvfb/xvfb-chromium /usr/bin/xvfb-chromium
-RUN ln -s /usr/bin/xvfb-chromium /usr/bin/google-chrome
-RUN ln -s /usr/bin/xvfb-chromium /usr/bin/chromium-browser
+COPY . /usr/src/app/hublot
+RUN chmod +x start.sh
 
 CMD ./start.sh
