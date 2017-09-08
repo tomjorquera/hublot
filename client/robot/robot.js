@@ -55,8 +55,7 @@ robot = {
     }
   },
 
-  recordParticipant(easyrtcid) {
-    const stream = robotController.getRemoteStream(easyrtcid);
+  openSTTSocket(easyrtcid) {
     const ws = robotLib.stt.getTranscriptSocket(e => {
       console.log('> ' + e.text);
       robotLib.reco.send(
@@ -65,9 +64,25 @@ robot = {
           text: e.from + '\t' + e.until + '\t' + easyrtcid + '\t' + e.text
         });
     });
-    robot.participantsMediaRecorders[easyrtcid] = robot.processAudio(stream, e => ws.send(e.data), 100);
+    ws.onerror = e => {
+      // Try to open new connection on error
+      console.error('STT ws for ' + easyrtcid + ' error. Trying to reopen');
+      console.error(e);
+      robot.openSTTSocket(easyrtcid);
+    };
     robot.recordedParticipantsWS[easyrtcid] = ws;
   },
+
+  getUserStream(easyrtcid) {
+    const stream = robotController.getRemoteStream(easyrtcid);
+    robot.participantsMediaRecorders[easyrtcid] = robot.processAudio(stream, e => robot.recordedParticipantsWS[easyrtcid].send(e.data), 100);
+  },
+
+  recordParticipant(easyrtcid) {
+    robot.openSTTSocket(easyrtcid);
+    robot.getUserStream(easyrtcid);
+  },
+
   stopRecordParticipant(easyrtcid) {
     robot.participantsMediaRecorders[easyrtcid].stop();
     robot.recordedParticipantsWS[easyrtcid].close();
