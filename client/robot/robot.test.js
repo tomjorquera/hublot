@@ -27,7 +27,12 @@ describe('client/robot', () => {
       external: {
         load: () => {}
       },
-      getParticipants: () => ['someid1', 'someid2'],
+      getMyId: () => 'robotId',
+      getParticipants: () => [
+        global.robotController.getMyId(),
+        'someid1',
+        'someid2'
+      ],
       getRemoteStream: id => ({type: 'RemoteStream', id})
     };
 
@@ -82,6 +87,12 @@ describe('client/robot', () => {
     });
     mediaRecorder.ondataavailable('somedata');
     expect(callbackCalled).toBe('somedata');
+  });
+
+  test('should not record itself', () => {
+    global.robot.start();
+    expect(global.MediaRecorder.instances)
+      .not.toHaveProperty(global.robotController.getMyId());
   });
 
   test('should start transcribing users already present on `start`', () => {

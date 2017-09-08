@@ -94,6 +94,11 @@ robot = {
       8000);
 
     // Record current participants already present in the room
-    robotController.getParticipants().map(robot.recordParticipant);
+    // (except the robot itself)
+    for (const participantId of robotController.getParticipants()) {
+      if (participantId !== robotController.getMyId()) {
+        robot.recordParticipant(participantId);
+      }
+    }
   }
 };
