@@ -2,3 +2,5 @@ Dockerfile
 .dockerignore
 .git
 node_modules/*
+tmp/
+nohup.out
