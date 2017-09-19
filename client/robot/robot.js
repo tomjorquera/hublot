@@ -101,7 +101,14 @@ robot = {
       robot.stopRecordParticipant(data.easyrtcid);
     };
 
-    robotLib.reco.start(room);
+    function recoStartRetry() {
+      if (!robotLib.reco.start(room)) {
+        setTimeout(recoStartRetry, 8000);
+      }
+    }
+    // If start fails, schedule retry at fixed interval until success
+    recoStartRetry();
+
     setInterval(
       () => robotLib.reco.getOnlineReco(room)
         .then(robot.processReco)

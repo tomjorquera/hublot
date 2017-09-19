@@ -27,45 +27,59 @@ robotLib.reco = function (config) {
 
   return {
     start: confid => {
-      const xhttp = new XMLHttpRequest();
-      xhttp.open('GET', 'http://' + config.reco.host + ':' + config.reco.port + '/stream?action=START&id=' + confid, false);
-      xhttp.send();
-    },
-
-    stop: confid => {
-      const xhttp = new XMLHttpRequest();
-      xhttp.open('GET', 'http://' + config.reco.host + ':' + config.reco.port + '/stream?action=STOP&id=' + confid, false);
-      xhttp.send();
-    },
-
-    send: content => {
       if (connected) {
-        recoStompClient.send('/app/chat', {}, JSON.stringify(content));
+				const xhttp = new XMLHttpRequest();
+				xhttp.open('GET', 'http://' + config.reco.host + ':' + config.reco.port + '/stream?action=START&id=' + confid, false);
+				xhttp.send();
+				return true;
       } else {
-        console.error('Online reco: not connected but trying to send %j', content);
+        console.error('Online reco: not connected but trying to send start to conf %s', confid);
+				return false;
       }
     },
 
-    getOnlineReco: confId => {
-      return new Promise((resolve, reject) => {
-        const xmlHttp = new XMLHttpRequest();
+    stop: confid => {
+      if (connected) {
+				const xhttp = new XMLHttpRequest();
+				xhttp.open('GET', 'http://' + config.reco.host + ':' + config.reco.port + '/stream?action=STOP&id=' + confid, false);
+				xhttp.send();
+				return true;
+			} else {
+				console.error('Online reco: not connected but trying to send stop to conf %s', confid);
+				return false;
+			}
+  },
 
-        xmlHttp.onreadystatechange = () => {
-          if (xmlHttp.readyState === 4) {
-            if (xmlHttp.status === 200) {
-              resolve(xmlHttp.responseText);
-            } else {
-              console.error('Online reco: error trying to reach http://%s:%s/resources', config.reco.host, config.reco.port);
-              reject(xmlHttp.statusText);
-            }
-          }
-        };
-
-        const url = 'http://' + config.reco.host + ':' + config.reco.port + '/resources?id=' + confId + '&resources=keywords;wiki';
-        xmlHttp.open('GET', url, true);
-        xmlHttp.setRequestHeader('Content-type', 'application/json');
-        xmlHttp.send(null);
-      });
+  send: content => {
+    if (connected) {
+      recoStompClient.send('/app/chat', {}, JSON.stringify(content));
+			return true;
+    } else {
+      console.error('Online reco: not connected but trying to send %j', content);
+			return false;
     }
+  },
+
+  getOnlineReco: confId => {
+    return new Promise((resolve, reject) => {
+      const xmlHttp = new XMLHttpRequest();
+
+      xmlHttp.onreadystatechange = () => {
+        if (xmlHttp.readyState === 4) {
+          if (xmlHttp.status === 200) {
+            resolve(xmlHttp.responseText);
+          } else {
+            console.error('Online reco: error trying to reach http://%s:%s/resources', config.reco.host, config.reco.port);
+            reject(xmlHttp.statusText);
+          }
+        }
+      };
+
+      const url = 'http://' + config.reco.host + ':' + config.reco.port + '/resources?id=' + confId + '&resources=keywords;wiki';
+      xmlHttp.open('GET', url, true);
+      xmlHttp.setRequestHeader('Content-type', 'application/json');
+      xmlHttp.send(null);
+    });
+  }
   };
 };
