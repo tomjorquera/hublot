@@ -117,3 +117,5 @@ robot = {
     }
   }
 };
+
+console.log('robot initialized');
