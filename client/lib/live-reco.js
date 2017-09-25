@@ -27,23 +27,34 @@ robotLib.reco = function (config) {
 
   return {
     start: confid => {
+      if (!connected) {
+        console.error('Online reco: not connected but trying to send start to conf %s', confid);
+        return false;
+      }
       const xhttp = new XMLHttpRequest();
       xhttp.open('GET', 'http://' + config.reco.host + ':' + config.reco.port + '/stream?action=START&id=' + confid, false);
       xhttp.send();
+      return true;
     },
 
     stop: confid => {
+      if (!connected) {
+        console.error('Online reco: not connected but trying to send stop to conf %s', confid);
+        return false;
+      }
       const xhttp = new XMLHttpRequest();
       xhttp.open('GET', 'http://' + config.reco.host + ':' + config.reco.port + '/stream?action=STOP&id=' + confid, false);
       xhttp.send();
+      return true;
     },
 
     send: content => {
-      if (connected) {
-        recoStompClient.send('/app/chat', {}, JSON.stringify(content));
-      } else {
+      if (!connected) {
         console.error('Online reco: not connected but trying to send %j', content);
+        return false;
       }
+      recoStompClient.send('/app/chat', {}, JSON.stringify(content));
+      return true;
     },
 
     getOnlineReco: confId => {

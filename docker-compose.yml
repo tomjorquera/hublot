@@ -1,0 +1,35 @@
+version: '3.2'
+
+services:
+
+  hublot:
+    build: .
+    image: linagora/hublot
+    depends_on:
+      - recommender
+      - kaldi-gstreamer
+      - selenium
+
+  recommender:
+    image: linagora/recommender
+    ports:
+      - "8080"
+
+  kaldi-gstreamer:
+    image: linagora/kaldi-gstreamer
+    ports:
+      - "80"
+    volumes:
+      - ${MODELS_PATH}:/opt/models
+    env_file: .env
+    environment:
+      - NB_WORKERS
+      - YAML
+      - MODELS_PATH
+
+  selenium:
+    image: selenium/standalone-chrome
+    ports:
+       - "4444"
+    volumes:
+       - ./media:/opt/media

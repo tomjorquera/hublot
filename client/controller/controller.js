@@ -13,7 +13,7 @@ robotController = {
 
   chatService: angular.element(document.body).injector().get('chat'),
 
-  getMyID: () => {
+  getMyId: () => {
     return easyrtc.myEasyrtcid;
   },
 

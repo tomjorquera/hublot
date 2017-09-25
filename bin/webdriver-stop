@@ -1,8 +1,0 @@
-#!/bin/sh
-
-if [ -f ./tmp/webdriver_pid ]
-then
-  kill $( cat ./tmp/webdriver_pid );
-  rm ./tmp/webdriver_pid
-fi
-
