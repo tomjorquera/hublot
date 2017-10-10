@@ -29,7 +29,6 @@ robot = {
     let previousReco = [];
     let isRecom = false;
 
-
     if (reco.keywords && reco.keywords.length > 0) {
       for (let i = 0; i < reco.keywords.length; i++) {
         if(!isRecom && robot.previousReco.indexOf(reco.keywords[i].key) === -1) {
@@ -42,7 +41,6 @@ robot = {
       if(!isRecom){
         return;
       }
-
 
       formattedReco += '<h5>Mots-Clés</h5> ';
       for (let i = 0; i < reco.keywords.length; i++) {
