@@ -26,19 +26,19 @@ robot = {
   processReco(reco) {
     reco = JSON.parse(reco);
     let formattedReco = '';
-    let previousReco = [];
+    const newPreviousReco = [];
     let isRecom = false;
 
     if (reco.keywords && reco.keywords.length > 0) {
       for (let i = 0; i < reco.keywords.length; i++) {
-        if(!isRecom && robot.previousReco.indexOf(reco.keywords[i].key) === -1) {
+        if (!isRecom && robot.previousReco.indexOf(reco.keywords[i].key) === -1) {
           isRecom = true;
         }
-        previousReco.push(reco.keywords[i].key);
+        newPreviousReco.push(reco.keywords[i].key);
       }
-      robot.previousReco = previousReco;
+      robot.previousReco = newPreviousReco;
 
-      if(!isRecom){
+      if (!isRecom) {
         return;
       }
 
