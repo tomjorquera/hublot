@@ -11,6 +11,7 @@ const config = arguments[1];
 robotController.external.load(config);
 
 robot = {
+  previousReco: [],
   recordedParticipantsWS: {},
   participantsMediaRecorders: {},
 
@@ -25,8 +26,22 @@ robot = {
   processReco(reco) {
     reco = JSON.parse(reco);
     let formattedReco = '';
+    const newPreviousReco = [];
+    let isRecom = false;
 
     if (reco.keywords && reco.keywords.length > 0) {
+      for (let i = 0; i < reco.keywords.length; i++) {
+        if (!isRecom && robot.previousReco.indexOf(reco.keywords[i].key) === -1) {
+          isRecom = true;
+        }
+        newPreviousReco.push(reco.keywords[i].key);
+      }
+      robot.previousReco = newPreviousReco;
+
+      if (!isRecom) {
+        return;
+      }
+
       formattedReco += '<h5>Mots-Clés</h5> ';
       for (let i = 0; i < reco.keywords.length; i++) {
         formattedReco += reco.keywords[i].key + ', ';
