@@ -83,9 +83,34 @@ robot = {
     robot.getUserStream(easyrtcid);
   },
 
+  getParticipantNumber() {
+    const participants = robotController.getParticipants();
+    let participantsNumber = participants.length;
+
+    for (let i = 0; i < participants.length; i++) {
+      const participant = participants[i];
+      try {
+        const mediaStream = robotController.getRemoteStream(participant);
+        if (mediaStream === null) {
+          participantsNumber--;
+        }
+      } catch (err) {
+        console.error('could not get remote stream for %s', participant);
+        console.error(err);
+      }
+    }
+    return participantsNumber;
+  },
+
   stopRecordParticipant(easyrtcid) {
     robot.participantsMediaRecorders[easyrtcid].stop();
     robot.recordedParticipantsWS[easyrtcid].close();
+  },
+
+  disconnectRobot() {
+    if (robot.getParticipantNumber() === 1) {
+      robotController.disconnect();
+    }
   },
 
   start: () => {
@@ -99,6 +124,7 @@ robot = {
 
     robotController.onAttendeeRemove = (e, data) => {
       robot.stopRecordParticipant(data.easyrtcid);
+      robot.disconnectRobot();
     };
 
     function recoStartRetry() {
@@ -122,6 +148,9 @@ robot = {
         robot.recordParticipant(participantId);
       }
     }
+
+    // Wait 5 minute before leaving a room if alone
+    setTimeout(robot.disconnectRobot(), 300000);
   }
 };
 

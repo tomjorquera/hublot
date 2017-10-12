@@ -53,6 +53,10 @@ robotController = {
     });
   },
 
+  disconnect: () => {
+    angular.element(document.getElementsByClassName('conference-user-control-bar')[0].childNodes[0].childNodes[2].childNodes[0]).scope().leaveConference();
+  },
+
   onAttendeePush: () => {},
   onAttendeeRemove: () => {},
   onAttendeeUpdate: () => {}
