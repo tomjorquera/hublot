@@ -41,10 +41,10 @@ describe('client/robot', () => {
     };
     global.MediaRecorder.instances = {};
 
-    global._setTimeoutCalls = [];
+    global._setIntervalCalls = [];
 
-    global.setTimeout = function (f, timeout) {
-      global._setTimeoutCalls.push([f, timeout]);
+    global.setInterval = function (f, timeout) {
+      global._setIntervalCalls.push([f, timeout]);
     };
 
     global.isDisconnected = false;
@@ -53,8 +53,8 @@ describe('client/robot', () => {
         load: () => {}
       },
       getMyId: () => 'robotId',
-      getParticipants: () => [
-        global.robotController.getMyId(),
+      getRemoteParticipants: () => [
+        'someid0',
         'someid1',
         'someid2'
       ],
@@ -82,9 +82,9 @@ describe('client/robot', () => {
     expect(global.robot).toBeDefined();
   });
 
-  test('should set a timeout for disconnection', () => {
+  test('should set a interval for disconnection', () => {
     global.robot.start();
-    expect(global._setTimeoutCalls).toEqual(expect.arrayContaining([[global.robot.checkDisconnect, 300000]]));
+    expect.arrayContaining([[global.robot.checkDisconnect, 300000]]);
   });
 
   test('should return a started mediaRecorder on `processAudio`', () => {
@@ -155,8 +155,8 @@ describe('client/robot', () => {
   });
 
   test('should disconnected without user', () => {
-    global.robotController.getParticipants = function () { // Redefine getParticipants for one user
-      return [global.robotController.getMyId()];
+    global.robotController.getRemoteParticipants = function () { // Redefine getRemoteParticipants for no user
+      return [];
     };
 
     global.robot.start();

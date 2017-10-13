@@ -59,14 +59,14 @@ describe('client/controller', () => {
   });
 
   test('should return the correct participants', () => {
-    const participants = global.robotController.getParticipants();
+    const participants = global.robotController.getRemoteParticipants();
     expect(participants).toEqual(expect.arrayContaining(['p1', 'p2', 'p3']));
     expect(participants).toHaveLength(3);
   });
 
   test('should not return participants without stream', () => {
     global.easyrtc = easyRTCMock(['p1', 'p2', 'p3'], ['nostream']);
-    const participants = global.robotController.getParticipants();
+    const participants = global.robotController.getRemoteParticipants();
 
     expect(participants).not.toEqual(expect.arrayContaining(['nostream']));
     expect(participants).toHaveLength(3);

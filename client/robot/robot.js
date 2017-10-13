@@ -90,7 +90,7 @@ robot = {
   },
 
   checkDisconnect() {
-    if (robotController.getParticipants().length === 1) {
+    if (robotController.getRemoteParticipants().length === 0) {
       robot.stop();
     }
   },
@@ -125,14 +125,14 @@ robot = {
 
     // Record current participants already present in the room
     // (except the robot itself)
-    for (const participantId of robotController.getParticipants()) {
+    for (const participantId of robotController.getRemoteParticipants()) {
       if (participantId !== robotController.getMyId()) {
         robot.recordParticipant(participantId);
       }
     }
-
+    
     // Wait 5 minute before leaving a room if alone
-    setTimeout(robot.checkDisconnect, 300000);
+    setInterval(robot.checkDisconnect, 300000);
   },
 
   stop: () => {

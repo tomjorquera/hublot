@@ -21,7 +21,7 @@ robotController = {
     return easyrtc.getRemoteStream(participant);
   },
 
-  getParticipants: () => {
+  getRemoteParticipants: () => {
     const participants = easyrtc.getRoomOccupantsAsArray(room);
     const res = [];
     for (let i = 0; i < participants.length; i++) {
