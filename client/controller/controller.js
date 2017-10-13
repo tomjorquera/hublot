@@ -49,8 +49,12 @@ robotController = {
     });
   },
 
+  getDisconnectButton: () => {
+    return document.getElementsByClassName('conference-user-control-bar')[0].childNodes[0].childNodes[2].childNodes[0]; // Check issue #53
+  },
+
   disconnect: () => {
-    angular.element(document.getElementsByClassName('conference-user-control-bar')[0].childNodes[0].childNodes[2].childNodes[0]).scope().leaveConference();
+    angular.element(robotController.getDisconnectButton()).scope().leaveConference();
   },
 
   onAttendeePush: () => {},

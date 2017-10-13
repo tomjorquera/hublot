@@ -13,6 +13,7 @@ robotController.external.load(config);
 robot = {
   recordedParticipantsWS: {},
   participantsMediaRecorders: {},
+  isDisconnected: false,
 
   processAudio(stream, callback, interval) {
     const mediaRecorder = new MediaRecorder(stream);
@@ -89,8 +90,8 @@ robot = {
   },
 
   checkDisconnect() {
-    if (robotController.getParticipantNumber().length === 1) {
-      robotController.disconnect();
+    if (robotController.getParticipants().length === 1) {
+      robot.stop();
     }
   },
 
@@ -131,7 +132,12 @@ robot = {
     }
 
     // Wait 5 minute before leaving a room if alone
-    setTimeout(robot.checkDisconnect(), 300000);
+    setTimeout(robot.checkDisconnect, 300000);
+  },
+
+  stop: () => {
+    robot.isDisconnected = true;
+    robotController.disconnect();
   }
 };
 

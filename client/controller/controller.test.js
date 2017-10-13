@@ -3,6 +3,7 @@
 // Let's do some simple mocking of client-side services
 
 const angular = {
+  disconnected: false,
   registeredEvents: {},
   element: () => ({
     scope: () => ({
@@ -10,6 +11,9 @@ const angular = {
         $on: (event, f) => {
           angular.registeredEvents[event] = f;
         }
+      },
+      leaveConference: () => {
+        angular.disconnected = true;
       }
     }),
     injector: () => ({
@@ -65,6 +69,7 @@ describe('client/controller', () => {
     const participants = global.robotController.getParticipants();
 
     expect(participants).not.toEqual(expect.arrayContaining(['nostream']));
+    expect(participants).toHaveLength(3);
   });
 
   test('should return the Streams of the participant', () => {
@@ -115,5 +120,11 @@ describe('client/controller', () => {
     angular.registeredEvents['conferencestate:attendees:update']({});
 
     expect(eventFired).toBe(true);
+  });
+
+  test('should be disconnected on disconnect', () => {
+    global.robotController.getDisconnectButton = () => {}; // Mock of hubl.in getDisconnectButton
+    global.robotController.disconnect();
+    expect(angular.disconnected).toBe(true);
   });
 });
