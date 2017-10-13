@@ -130,7 +130,7 @@ robot = {
         robot.recordParticipant(participantId);
       }
     }
-    
+
     // Wait 5 minute before leaving a room if alone
     setInterval(robot.checkDisconnect, 300000);
   },
