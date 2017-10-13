@@ -17,23 +17,19 @@ robotController = {
     return easyrtc.myEasyrtcid;
   },
 
-  getParticipants: () => {
-    return easyrtc.getRoomOccupantsAsArray(room);
-  },
-
   getRemoteStream: participant => {
     return easyrtc.getRemoteStream(participant);
   },
 
-  getRemoteStreams: () => {
-    const participants = robotController.getParticipants();
-    const res = {};
+  getParticipants: () => {
+    const participants = easyrtc.getRoomOccupantsAsArray(room);
+    const res = [];
     for (let i = 0; i < participants.length; i++) {
       const participant = participants[i];
       try {
         const mediaStream = robotController.getRemoteStream(participant);
         if (mediaStream !== null) {
-          res[participant] = mediaStream;
+          res.push(participant);
         }
       } catch (err) {
         console.error('could not get remote stream for %s', participant);

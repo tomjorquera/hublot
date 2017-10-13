@@ -51,7 +51,9 @@ describe('client/robot', () => {
         'someid1',
         'someid2'
       ],
-      getRemoteStream: id => ({type: 'RemoteStream', id})
+      getRemoteStream: id => ({type: 'RemoteStream', id}),
+      getParticipantNumber: () => 3,
+      disconnect: () => {}
     };
 
     global.robotLib = {
