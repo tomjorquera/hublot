@@ -41,17 +41,27 @@ describe('client/robot', () => {
     };
     global.MediaRecorder.instances = {};
 
+    global._setIntervalCalls = [];
+
+    global.setInterval = function (f, timeout) {
+      global._setIntervalCalls.push([f, timeout]);
+    };
+
+    global.isDisconnected = false;
     global.robotController = {
       external: {
         load: () => {}
       },
       getMyId: () => 'robotId',
-      getParticipants: () => [
-        global.robotController.getMyId(),
+      getRemoteParticipants: () => [
+        'someid0',
         'someid1',
         'someid2'
       ],
-      getRemoteStream: id => ({type: 'RemoteStream', id})
+      getRemoteStream: id => ({type: 'RemoteStream', id}),
+      disconnect: () => {
+        global.isDisconnected = true;
+      }
     };
 
     global.robotLib = {
@@ -70,6 +80,11 @@ describe('client/robot', () => {
 
   test('should define global robot variable', () => {
     expect(global.robot).toBeDefined();
+  });
+
+  test('should set a interval for disconnection', () => {
+    global.robot.start();
+    expect.arrayContaining([[global.robot.checkDisconnect, 300000]]);
   });
 
   test('should return a started mediaRecorder on `processAudio`', () => {
@@ -130,6 +145,23 @@ describe('client/robot', () => {
 
     expect(global.MediaRecorder.instances.someid1.stopped).toBeTruthy();
     expect(sttMock.wsMock.status).toBe('closed');
+  });
+
+  test('should not disconnected with more than one user', () => {
+    global.robot.start();
+    global.robotController.onAttendeeRemove({}, {easyrtcid: 'someid1'});
+
+    expect(global.isDisconnected).toBe(false);
+  });
+
+  test('should disconnected without user', () => {
+    global.robotController.getRemoteParticipants = function () { // Redefine getRemoteParticipants for no user
+      return [];
+    };
+
+    global.robot.start();
+    global.robotController.onAttendeeRemove({}, {easyrtcid: 'someid1'});
+    expect(global.isDisconnected).toBe(true);
   });
 
   test('should try to reopen a stt ws on error', () => {

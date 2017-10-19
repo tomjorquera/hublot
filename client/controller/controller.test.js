@@ -3,6 +3,7 @@
 // Let's do some simple mocking of client-side services
 
 const angular = {
+  disconnected: false,
   registeredEvents: {},
   element: () => ({
     scope: () => ({
@@ -10,6 +11,9 @@ const angular = {
         $on: (event, f) => {
           angular.registeredEvents[event] = f;
         }
+      },
+      leaveConference: () => {
+        angular.disconnected = true;
       }
     }),
     injector: () => ({
@@ -20,9 +24,19 @@ const angular = {
   })
 };
 
-const easyRTCMock = participants => ({
-  getRoomOccupantsAsArray: () => participants,
-  getRemoteStream: participant => ({origin: participant})
+const easyRTCMock = (participantsWithStream, participantsWithoutStream = []) => ({
+  getRoomOccupantsAsArray: () => participantsWithStream
+                                .concat(participantsWithoutStream),
+  getRemoteStream: participant => {
+    // Participant must be in list of participants AND not be in the list
+    // of participants without stream.
+    if (participantsWithStream.indexOf(participant) !== -1) {
+      return {
+        origin: participant
+      };
+    }
+    return null;
+  }
 });
 
 const document = {
@@ -45,21 +59,22 @@ describe('client/controller', () => {
   });
 
   test('should return the correct participants', () => {
-    const participants = global.robotController.getParticipants();
+    const participants = global.robotController.getRemoteParticipants();
     expect(participants).toEqual(expect.arrayContaining(['p1', 'p2', 'p3']));
+    expect(participants).toHaveLength(3);
+  });
+
+  test('should not return participants without stream', () => {
+    global.easyrtc = easyRTCMock(['p1', 'p2', 'p3'], ['nostream']);
+    const participants = global.robotController.getRemoteParticipants();
+
+    expect(participants).not.toEqual(expect.arrayContaining(['nostream']));
     expect(participants).toHaveLength(3);
   });
 
   test('should return the Streams of the participant', () => {
     const stream = global.robotController.getRemoteStream('p2');
     expect(stream.origin).toBe('p2');
-  });
-
-  test('should return the Streams of all the participants', () => {
-    const streams = global.robotController.getRemoteStreams();
-    expect(streams).toHaveProperty('p1');
-    expect(streams).toHaveProperty('p2');
-    expect(streams).toHaveProperty('p3');
   });
 
   test('should call listener on push events', () => {
@@ -105,5 +120,11 @@ describe('client/controller', () => {
     angular.registeredEvents['conferencestate:attendees:update']({});
 
     expect(eventFired).toBe(true);
+  });
+
+  test('should be disconnected on disconnect', () => {
+    global.robotController.getDisconnectButton = () => {}; // Mock of hubl.in getDisconnectButton
+    global.robotController.disconnect();
+    expect(angular.disconnected).toBe(true);
   });
 });

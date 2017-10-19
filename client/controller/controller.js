@@ -17,27 +17,25 @@ robotController = {
     return easyrtc.myEasyrtcid;
   },
 
-  getParticipants: () => {
-    return easyrtc.getRoomOccupantsAsArray(room);
-  },
-
   getRemoteStream: participant => {
     return easyrtc.getRemoteStream(participant);
   },
 
-  getRemoteStreams: () => {
-    const participants = robotController.getParticipants();
-    const res = {};
-    for (let i = 0; i < participants.length; i++) {
-      const participant = participants[i];
-      try {
-        const mediaStream = robotController.getRemoteStream(participant);
-        if (mediaStream !== null) {
-          res[participant] = mediaStream;
+  getRemoteParticipants: () => {
+    const participants = easyrtc.getRoomOccupantsAsArray(room);
+    const res = [];
+    if (participants) {
+      for (let i = 0; i < participants.length; i++) {
+        const participant = participants[i];
+        try {
+          const mediaStream = robotController.getRemoteStream(participant);
+          if (mediaStream !== null) {
+            res.push(participant);
+          }
+        } catch (err) {
+          console.error('could not get remote stream for %s', participant);
+          console.error(err);
         }
-      } catch (err) {
-        console.error('could not get remote stream for %s', participant);
-        console.error(err);
       }
     }
     return res;
@@ -51,6 +49,14 @@ robotController = {
       displayName: author,
       published: new Date()
     });
+  },
+
+  getDisconnectButton: () => {
+    return document.getElementsByClassName('conference-user-control-bar')[0].childNodes[0].childNodes[2].childNodes[0]; // Check issue #53
+  },
+
+  disconnect: () => {
+    angular.element(robotController.getDisconnectButton()).scope().leaveConference();
   },
 
   onAttendeePush: () => {},

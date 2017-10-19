@@ -14,6 +14,7 @@ robot = {
   previousReco: [],
   recordedParticipantsWS: {},
   participantsMediaRecorders: {},
+  isDisconnected: false,
 
   processAudio(stream, callback, interval) {
     const mediaRecorder = new MediaRecorder(stream);
@@ -103,6 +104,12 @@ robot = {
     robot.recordedParticipantsWS[easyrtcid].close();
   },
 
+  checkDisconnect() {
+    if (robotController.getRemoteParticipants().length === 0) {
+      robot.stop();
+    }
+  },
+
   start: () => {
     robotLib.stt = robotLib.stt(config);
     robotLib.reco = robotLib.reco(config);
@@ -114,6 +121,7 @@ robot = {
 
     robotController.onAttendeeRemove = (e, data) => {
       robot.stopRecordParticipant(data.easyrtcid);
+      robot.checkDisconnect();
     };
 
     function recoStartRetry() {
@@ -132,11 +140,19 @@ robot = {
 
     // Record current participants already present in the room
     // (except the robot itself)
-    for (const participantId of robotController.getParticipants()) {
+    for (const participantId of robotController.getRemoteParticipants()) {
       if (participantId !== robotController.getMyId()) {
         robot.recordParticipant(participantId);
       }
     }
+
+    // Wait 5 minute before leaving a room if alone
+    setInterval(robot.checkDisconnect, 300000);
+  },
+
+  stop: () => {
+    robot.isDisconnected = true;
+    robotController.disconnect();
   }
 };
 
